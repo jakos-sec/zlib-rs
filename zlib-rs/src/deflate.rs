@@ -50,6 +50,22 @@ pub struct DeflateStream<'a> {
     pub(crate) reserved: crate::c_api::uLong,
 }
 
+#[cfg(feature = "randomize-level")]
+fn random_level() -> i32 {
+    use std::random::random;
+    let max = 9;
+    let min = 1;
+    let range: i32 = max - min + 1;
+    if range == 0 {
+        random(..)
+    } else {
+        min + std::iter::repeat_with(|| random::<i32>(..))
+            .find(|&trial| trial >= range.wrapping_neg() % range)
+            .unwrap()
+            % range
+    }
+}
+
 impl<'a> DeflateStream<'a> {
     // z_stream and DeflateStream must have the same layout. Do our best to check if this is true.
     // (imperfect check, but should catch most mistakes.)
@@ -245,6 +261,11 @@ pub fn init(stream: &mut z_stream, config: DeflateConfig) -> ReturnCode {
         level = 6;
     }
 
+    #[cfg(all(debug_assertions, feature = "randomize-level"))]
+    if (0..=9).contains(&level) {
+        level = random_level();
+    }
+
     let wrap = if window_bits < 0 {
         if window_bits < -MAX_WBITS {
             return ReturnCode::StreamError;
@@ -423,6 +444,9 @@ pub fn params(stream: &mut DeflateStream, level: i32, strategy: Strategy) -> Ret
     } else {
         level
     };
+
+    #[cfg(all(debug_assertions, feature = "randomize-level"))]
+    let level = if (0..=9).contains(&level) { dbg!(random_level()) } else { level };
 
     if !(0..=9).contains(&level) {
         return ReturnCode::StreamError;

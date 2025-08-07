@@ -24,6 +24,7 @@ __internal-fuzz = ["arbitrary"]
 __internal-fuzz-disable-checksum = [] # disable checksum validation on inflate
 __internal-test = ["quickcheck"]
 ZLIB_DEBUG = []
+randomize-level = []
 
 
 [dependencies]

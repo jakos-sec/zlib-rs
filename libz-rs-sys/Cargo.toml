@@ -22,6 +22,7 @@ export-symbols = [] # whether the zlib api symbols are publicly exported
 custom-prefix = ["export-symbols"] # use the LIBZ_RS_SYS_PREFIX to prefix all exported symbols
 testing-prefix = ["export-symbols"] # prefix all symbols with LIBZ_RS_SYS_TEST_ for testing
 semver-prefix = ["export-symbols"] # prefix all symbols in a semver-compatible way
+randomize-level = ["zlib-rs/randomize-level"]
 
 [dependencies]
 zlib-rs = { workspace = true, default-features = false }

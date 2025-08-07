@@ -1,5 +1,6 @@
 #![doc = core::include_str!("../README.md")]
 #![cfg_attr(not(any(test, feature = "rust-allocator")), no_std)]
+#![cfg_attr(all(debug_assertions, feature = "randomize-level"), feature(random))]
 
 #[cfg(any(feature = "rust-allocator", feature = "c-allocator"))]
 extern crate alloc;
